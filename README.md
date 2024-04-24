@@ -1,71 +1,48 @@
-# Getting Started with Create React App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
-hi
+# Proyecto CI github-Actions
 
-## Available Scripts
+# Pasos:
 
-In the project directory, you can run:
+# 1. Construir el dockerfile
+En este paso, se construye una imagen de Docker utilizando el archivo Dockerfile. El Dockerfile contiene las instrucciones para crear un entorno de ejecución específico, en este caso vamos a crear una imagen de Node.js para ejecutar el código de la aplicación.
 
-### `npm start`
+```Dockerfile
+FROM node:latest
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+EXPOSE 3000
+CMD ["npm", "run", "dev"]
+```
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+# 2. Crear la GitHub Action:
+Una GitHub Action es un flujo de trabajo automatizado que se ejecuta en respuesta a eventos específicos en tu repositorio de GitHub. En este caso, se está creando una acción para automatizar el proceso de construcción y empuje de la imagen de Docker y para esto vamos a usar un job y una serie de steps de ese job:
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+![Image](images/1.png)
 
-### `npm test`
+## Checkout
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Esta acción se encarga de clonar el repositorio en el entorno de ejecución de la acción. Esto permite acceder a los archivos y directorios del repositorio durante la ejecución del flujo de trabajo.
 
-### `npm run build`
+## Docker set up buildx
+Esta acción configura el entorno de Docker para utilizar la funcionalidad de buildx. Buildx es una herramienta que permite construir imágenes de Docker de forma más eficiente y con soporte para diferentes plataformas.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Docker login 
+### (Usar Secretos de GitHub para las credenciales del Docker login)
+En este paso, se realiza el inicio de sesión en Docker utilizando las credenciales proporcionadas como secretos en GitHub. Los secretos son variables de entorno encriptadas que se utilizan para almacenar información sensible, para este paso se utiliza el secreto llamado DOCKER_USERNAME y DOCKER_PASSWORD creado en settings de GitHub -> Secrets.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Docker Build and push
+Esta acción se encarga de construir la imagen de Docker utilizando el Dockerfile y luego empujarla al registro de Docker especificado. El registro de Docker es un repositorio centralizado donde se almacenan y comparten las imágenes de Docker.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### El archivo docker-image.yml debería verse así despues de la creación de todos los pasos:
 
-### `npm run eject`
+![Image2](images/2.png)
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### Ahora se crea el commit y este actions se ejecuta, debería verse así:
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+![Image3](images/3.png)
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### Vista desde los logs del actions:
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+![Image4](images/4.png)
