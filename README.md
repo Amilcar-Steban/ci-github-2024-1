@@ -3,7 +3,7 @@
 
 # Pasos:
 
-# 1. Construir el dockerfile
+# 1. Construir el dockerfile:
 En este paso, se construye una imagen de Docker utilizando el archivo Dockerfile. El Dockerfile contiene las instrucciones para crear un entorno de ejecución específico, en este caso vamos a crear una imagen de Node.js para ejecutar el código de la aplicación.
 
 ```Dockerfile
@@ -35,6 +35,8 @@ En este paso, se realiza el inicio de sesión en Docker utilizando las credencia
 ## Docker Build and push
 Esta acción se encarga de construir la imagen de Docker utilizando el Dockerfile y luego empujarla al registro de Docker especificado. El registro de Docker es un repositorio centralizado donde se almacenan y comparten las imágenes de Docker.
 
+# 3. Comprobaciones:
+
 ### El archivo docker-image.yml debería verse así despues de la creación de todos los pasos:
 
 ![Image2](images/2.png)
@@ -46,3 +48,5 @@ Esta acción se encarga de construir la imagen de Docker utilizando el Dockerfil
 ### Vista desde los logs del actions:
 
 ![Image4](images/4.png)
+
+Autor: Amilcar Rodriguez
